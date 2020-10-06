@@ -49,20 +49,26 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-// setInterval(function () {
+convDateFunc = function (date) {
+      date_year = date.toString().slice(0, 4);
+      date_month = date.toString().slice(5, 7);
+      date_day = date.toString().slice(8, 10);
+      nextDate = date_month + "-" + date_day + "-" + date_year;
+      return nextDate;
+}
+
+setInterval(function () {
 console.log("Check for Updates...");
-pool.query('SELECT MAX(date) AS last_date FROM used_dates', function (error, results, fields) {
+pool.query('SELECT MAX(date) AS next_date FROM next_dates', function (error, results, fields) {
   if (error) throw error;
-  if (0 + 86400000 < Date.now()) {
-    // if (results[0] + 86400000 < Date.now()) {
     console.log("There should be an update.");
-    request('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/10-05-2020.csv', function (error, response, body) {
+    request('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/' + convDateFunc(results[0].next_date) + '.csv', function (error, response, body) {
       // console.error('error:', error); // Print the error if one occurred
       // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
       if (response.statusCode == 200) {
         console.log("File available. Starting update. This takes a couple of seconds.");
         csv()
-          .fromStream(request.get('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/10-04-2020.csv'))
+          .fromStream(request.get('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/' + convDateFunc(results[0].next_date) + '.csv'))
           .subscribe((json) => {
             return new Promise((resolve, reject) => {
               json.Last_Update = json.Last_Update.slice(0, 10);
@@ -86,9 +92,8 @@ pool.query('SELECT MAX(date) AS last_date FROM used_dates', function (error, res
         console.log("File probably not available.")
       }
     });
-  }
 });
-// }, 600000);
+}, 60000);
 
 onError = function () {
   console.log("Error. Could not update.");
@@ -98,7 +103,7 @@ onComplete = function () {
   pool.query('SELECT last_update FROM daily_reports WHERE id=(SELECT MAX(id) FROM daily_reports)', function (error, results, fields) {
     if (error) throw error;
     if (results[0]) {
-      pool.query('INSERT INTO used_dates(`date`) VALUES (?)', [results[0].last_update], function (error, results, fields) {
+      pool.query('INSERT INTO next_dates(`date`) VALUES (?)', [results[0].last_update], function (error, results, fields) {
         if (error) throw error;
       });
     }
@@ -106,11 +111,4 @@ onComplete = function () {
   console.log("Database updated!");
 }
 
-/*
-nextDate = function (oldDate) {
-  oldDate_year =
-    oldDate_month =
-    oldDate_day =
-}
-*/
 module.exports = app;
