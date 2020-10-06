@@ -61,12 +61,11 @@ setInterval(function () {
 console.log("Check for Updates...");
 pool.query('SELECT MAX(date) AS next_date FROM next_dates', function (error, results, fields) {
   if (error) throw error;
-    console.log("There should be an update.");
     request('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/' + convDateFunc(results[0].next_date) + '.csv', function (error, response, body) {
       // console.error('error:', error); // Print the error if one occurred
       // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
       if (response.statusCode == 200) {
-        console.log("File available. Starting update. This takes a couple of seconds.");
+        console.log("New file available. Starting update. This takes a couple of seconds.");
         csv()
           .fromStream(request.get('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/' + convDateFunc(results[0].next_date) + '.csv'))
           .subscribe((json) => {
@@ -89,7 +88,7 @@ pool.query('SELECT MAX(date) AS next_date FROM next_dates', function (error, res
             })
           }, onError, onComplete);
       } else {
-        console.log("File probably not available.")
+        console.log("Probably no new file not available.")
       }
     });
 });

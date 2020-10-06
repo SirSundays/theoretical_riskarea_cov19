@@ -7,7 +7,7 @@ services:
         ports: 
             - 3306:3306
         volumes:
-            - mariadb-data:/var/lib/mysql
+            - ./mariadb-data:/var/lib/mysql
         environment:
             - MYSQL_ROOT_PASSWORD=covid
 
