@@ -1,0 +1,23 @@
+{
+  "name": "population_scraper",
+  "version": "1.0.0",
+  "description": "Easy tool to scrape all populations numbers from google and write it to the database of the whole project.",
+  "main": "scrape.js",
+  "scripts": {
+    "start": "node scrape.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SirSundays/theoretical_riskarea_cov19.git"
+  },
+  "author": "SirSundays",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SirSundays/theoretical_riskarea_cov19/issues"
+  },
+  "homepage": "https://github.com/SirSundays/theoretical_riskarea_cov19#readme",
+  "dependencies": {
+    "mysql": "^2.18.1",
+    "puppeteer": "^5.3.1"
+  }
+}
