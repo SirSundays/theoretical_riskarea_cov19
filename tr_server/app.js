@@ -41,7 +41,10 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.json({
+    message: err.message,
+    error: err
+  });
 });
 
 convDateFunc = function (date) {
@@ -83,7 +86,7 @@ pool.query('SELECT MAX(date) AS next_date FROM next_dates', function (error, res
             })
           }, onError, onComplete);
       } else {
-        console.log("Probably no new file not available.")
+        console.log("Probably no new file available.")
       }
     });
 });

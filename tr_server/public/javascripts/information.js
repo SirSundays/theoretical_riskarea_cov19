@@ -5,7 +5,7 @@ $(document).ready(() => {
     $.ajax({
         url: "/data/newestDate",
         success: function (result) {
-            logToConsole(result);
+            // logToConsole(result);
             $("#date").html(result);
         }
     });
