@@ -1,3 +1,4 @@
+const { json } = require('express');
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
@@ -49,7 +50,7 @@ convertDaysToWhere = function (dates) {
 }
 
 getAllDistinctCountries = function (resume) {
-  pool.query('SELECT DISTINCT country FROM `population` WHERE population > 0', function (error, results, fields) {
+  pool.query('SELECT country, code FROM country_codes', function (error, results, fields) {
     errFunc(error);
     resume(results);
   });
@@ -128,6 +129,24 @@ router.get('/specificCountries/:countryString/:province/:incidenceDays/:day', as
   getSpecificCountry(req.params.countryString, req.params.province, parseInt(req.params.incidenceDays) + 1, req.params.day, (results) => {
     res.json({
       'incidenceRate': results
+    });
+  });
+});
+
+// GET current incidence of all countries
+router.get('/allCountries/:incidenceDays/:day', async function (req, res, next) {
+  let jsonOut = {};
+  // Is this dirty? Yes. But it works (if good performance actually). In the future I have to look into using Promises for this.
+  let resultsCount = 0;
+  getAllDistinctCountries((results) => {
+    results.forEach(country => {
+      getSpecificCountry(country.country, "-", parseInt(req.params.incidenceDays) + 1, req.params.day, (result) => {
+        jsonOut[country.code] = {'incidenceRateVal': parseFloat(result).toFixed(2)};
+        resultsCount++;
+        if (resultsCount == results.length) {
+          res.json(jsonOut);
+        }
+      });
     });
   });
 });

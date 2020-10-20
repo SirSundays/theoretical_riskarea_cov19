@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="stylesheet" href="/stylesheets/style.css">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -16,16 +17,24 @@
 
 <body>
     <h1>Theoretical Riskareas</h1>
-    <p>Newest Date: <span id="date"></span></p>
+    <form>
+        <p>Newest Date: <span id="newestDate"></span></p>
+
+        <div class="custom-control custom-switch" id="incidenceSwitchDiv">
+            <input type="checkbox" class="custom-control-input" id="incidenceSwitch">
+            <label class="custom-control-label" for="incidenceSwitch">7 days (off) / 14 days (on)</label>
+        </div>
+    </form>
 
     <div class="card">
         <div class="card-header">
-            <h3>Current theoretical riskareas</h3>
-            <p>7-day-incidence above 50 people per 100.000</p>
+            <h3>Map of theoretical riskareas</h3>
+            <p>Red -> above 50 per 100.000</p>
+        </div>
+        <div class="card-body">
+            <div id="svgMap"></div>
         </div>
     </div>
-
-    <div id="svgMap"></div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
