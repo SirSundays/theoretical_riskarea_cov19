@@ -8,7 +8,7 @@ const request = require('request');
 const csv = require('csvtojson');
 
 var pool = mysql.createPool({
-  connectionLimit: 100,
+  connectionLimit: 10000,
   host: 'localhost',
   user: 'root',
   password: 'covid',
@@ -90,16 +90,16 @@ pool.query('SELECT MAX(date) AS next_date FROM next_dates', function (error, res
       }
     });
 });
-}, 60000);
+}, 30000);
 
 onError = function () {
   console.log("Error. Could not update.");
 }
 
 onComplete = function () {
-  pool.query('SELECT last_update FROM daily_reports WHERE id=(SELECT MAX(id) FROM daily_reports)', function (error, results, fields) {
+  pool.query('SELECT last_update FROM daily_reports ORDER BY last_update DESC LIMIT 50', function (error, results, fields) {
     if (error) throw error;
-    if (results[0]) {
+    if (results[results.length-1]) {
       pool.query('INSERT INTO next_dates(`date`) VALUES (?)', [results[0].last_update], function (error, results, fields) {
         if (error) throw error;
       });
